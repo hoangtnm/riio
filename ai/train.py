@@ -15,11 +15,11 @@ import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
-from utils import get_device
-from utils import get_data_loader
-from utils import get_metadata
-from utils import get_net
-from utils import write_embedding_to_tensorboard
+from .utils import get_device
+from .utils import get_data_loader
+from .utils import get_metadata
+from .utils import get_net
+from .utils import write_embedding_to_tensorboard
 
 
 def main(net, checkpoint, feature_size, training_loader, evaluation_loader=None, writer=None, epochs=10, lr=1e-3):

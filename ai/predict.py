@@ -4,11 +4,11 @@ import sys
 import torch
 from PIL import Image
 
-from utils import get_device
-from utils import get_metadata
-from utils import get_net
-from utils import get_prediction_class
-from utils import preprocess_image
+from .utils import get_device
+from .utils import get_metadata
+from .utils import get_net
+from .utils import get_prediction_class
+from .utils import preprocess_image
 
 if __name__ == '__main__':
     device = get_device()
