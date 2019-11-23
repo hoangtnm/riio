@@ -44,11 +44,11 @@ def main(net, checkpoint, feature_size, training_loader, evaluation_loader=None,
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=lr)
 
-    best_loss = 0.5
+    best_acc = 0.0
     initial_epoch = 0
     if os.path.exists(checkpoint):
         checkpoint = torch.load(checkpoint, map_location=device)
-        model.load_state_dict(checkpoint['model_state_dict'])
+        net.load_state_dict(checkpoint['model_state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         initial_epoch = checkpoint['epoch'] + 1
 
@@ -84,18 +84,18 @@ def main(net, checkpoint, feature_size, training_loader, evaluation_loader=None,
             #                       plot_classes_preds(net, class_names, inputs, labels),
             #                       global_step=epoch * len(dataset_loader) + i)
 
-        # Embedding evaluation
-        if evaluation_loader is not None:
-            images, labels = next(iter(evaluation_loader))
-            write_embedding_to_tensorboard(images, labels, feature_size, class_names, writer, epoch)
+        # # Embedding evaluation
+        # if evaluation_loader is not None:
+        #     images, labels = next(iter(evaluation_loader))
+        #     write_embedding_to_tensorboard(images, labels, feature_size, class_names, writer, epoch)
 
         epoch_loss = running_loss / len(training_loader.dataset)
         epoch_acc = running_corrects.double() / len(training_loader.dataset)
         print(f'Epoch: {epoch} - loss: {epoch_loss:.4f} - acc: {epoch_acc:.4f}\n')
 
         # Saving checkpoint
-        if epoch_loss < best_loss:
-            best_loss = epoch_loss
+        if epoch_acc > best_acc:
+            best_acc = epoch_acc
             best_net_wts = copy.deepcopy(net.state_dict())
             torch.save({
                 'epoch': epoch,
@@ -104,6 +104,8 @@ def main(net, checkpoint, feature_size, training_loader, evaluation_loader=None,
                 'optimizer_state_dict': optimizer.state_dict(),
             }, checkpoint)
 
+    # load best model weights
+    net.load_state_dict(best_net_wts)
     return net
 
 
