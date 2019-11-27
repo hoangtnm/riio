@@ -6,11 +6,11 @@ from .models import Profile
 
 
 def upload_file(request):
-    if request.method == 'POST':  # 1
-        form = ProfileForm(request.POST, files=request.FILES)  # 2
-        if form.is_valid():  # 3
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, files=request.FILES)
+        if form.is_valid():
             image = form.save()
-            return redirect('upload_file')  # 4
+            return redirect('upload_file')
     else:
         form = ProfileForm()
 
@@ -21,7 +21,6 @@ def upload_file(request):
 
 
 def display_history(request):
-    # template = loader.get_template('upload/history.html')
     if request.method == 'GET':  # 1
         form = ProfileForm(request.POST, files=request.FILES)  # 2
     else:
