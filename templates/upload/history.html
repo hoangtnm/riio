@@ -1,0 +1,12 @@
+{%  extends 'base.html' %}
+{%block history %}
+	History
+	<ul>
+		{% for image in images %}
+			<li>
+				<h3>{{ image.name }}</h3>
+				<img src="{{ image.image.url }}  "style="width:500px;high:500px;" alt="">
+			</li>
+ 		{% endfor %}
+	</ul>
+{% endblock history %}
