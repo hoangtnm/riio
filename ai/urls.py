@@ -3,5 +3,6 @@ from . import views
 
 app_name = 'ai'
 urlpatterns = [
-    path('', views.index, name='index')
+    path('', views.upload_file, name='upload_file'),
+    path('history/', views.display_history, name='display_history')
 ]
