@@ -8,27 +8,25 @@
 import copy
 import os
 import shutil
+import time
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-
-from .utils import get_device
-from .utils import get_data_loader
-from .utils import get_metadata
-from .utils import get_net
-from .utils import write_embedding_to_tensorboard
+from utils import get_data_loader
+from utils import get_device
+from utils import get_metadata
+from utils import get_net
 
 
-def main(net, checkpoint, feature_size, training_loader, evaluation_loader=None, writer=None, epochs=10, lr=1e-3):
+def main(net, checkpoint, training_loader, evaluation_loader=None, writer=None, epochs=10, lr=1e-3):
     """Training function.
 
     Args:
         net: model instance.
         checkpoint: path to checkpoint.
-        feature_size:
         training_loader: training data loader.
         evaluation_loader: eval data loader.
         writer: SummaryWriter instance.
@@ -53,8 +51,6 @@ def main(net, checkpoint, feature_size, training_loader, evaluation_loader=None,
         initial_epoch = checkpoint['epoch'] + 1
 
     for epoch in range(initial_epoch, epochs):
-        # print(f'Epoch: {epoch}/{epochs}')
-        # time.sleep(1)
 
         running_loss = 0.0
         running_corrects = 0
@@ -84,11 +80,6 @@ def main(net, checkpoint, feature_size, training_loader, evaluation_loader=None,
             #                       plot_classes_preds(net, class_names, inputs, labels),
             #                       global_step=epoch * len(dataset_loader) + i)
 
-        # # Embedding evaluation
-        # if evaluation_loader is not None:
-        #     images, labels = next(iter(evaluation_loader))
-        #     write_embedding_to_tensorboard(images, labels, feature_size, class_names, writer, epoch)
-
         epoch_loss = running_loss / len(training_loader.dataset)
         epoch_acc = running_corrects.double() / len(training_loader.dataset)
         print(f'Epoch: {epoch} - loss: {epoch_loss:.4f} - acc: {epoch_acc:.4f}\n')
@@ -104,6 +95,8 @@ def main(net, checkpoint, feature_size, training_loader, evaluation_loader=None,
                 'optimizer_state_dict': optimizer.state_dict(),
             }, checkpoint)
 
+        time.sleep(0.25)
+
     # load best model weights
     net.load_state_dict(best_net_wts)
     return net
@@ -112,9 +105,8 @@ def main(net, checkpoint, feature_size, training_loader, evaluation_loader=None,
 if __name__ == '__main__':
 
     HyperParams = {
-        'batch_size': 32,
-        'input_size': 224,
-        'epochs': 10
+        'batch_size': 128,
+        'epochs': 20
     }
 
     checkpoint_path = os.path.join('checkpoint', 'checkpoint.pth')
@@ -138,6 +130,5 @@ if __name__ == '__main__':
 
     num_classes = len(class_names)
     model = get_net(classes=num_classes)
-    model = main(model, checkpoint_path, HyperParams['input_size'], train_loader,
-                 eval_loader, writer=writer, epochs=HyperParams['epochs'])
+    model = main(model, checkpoint_path, train_loader, eval_loader, writer=writer, epochs=HyperParams['epochs'])
     writer.close()
