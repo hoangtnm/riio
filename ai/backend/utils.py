@@ -1,13 +1,15 @@
-import torch
-import numpy as np
-import torch.nn as nn
+import os
+
 import matplotlib.pyplot as plt
-from torch.utils.data import Dataset
+import numpy as np
+import torch
+import torch.nn as nn
+from PIL import Image
 from torch.utils.data import DataLoader
-from torchvision.datasets import ImageFolder
-from torch.utils.tensorboard import SummaryWriter
-from torchvision import transforms
+from torch.utils.data import Dataset
 from torchvision import models
+from torchvision import transforms
+from torchvision.datasets import ImageFolder
 
 
 # TODO: Adding a “Projector” to TensorBoard
@@ -67,8 +69,9 @@ def get_net(classes):
     Returns:
         net: model instance.
     """
-    net = models.resnet18(pretrained=False)
-    net.fc = nn.Linear(net.fc.in_features, classes)
+    net = models.mobilenet_v2()
+    in_features = net.classifier[1].in_features
+    net.classifier[1] = nn.Linear(in_features, classes)
     return net
 
 
@@ -86,13 +89,25 @@ def load_checkpoint(model, path, optimizer=None):
         epoch: epoch at which to start training (useful for resuming a previous training run).
         loss: best loss.
     """
-    checkpoint = torch.load(path)
+    device = get_device()
+    checkpoint = torch.load(path, map_location=device)
     model.load_state_dict(checkpoint['model_state_dict'])
-    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    if optimizer is not None:
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     epoch = checkpoint['epoch']
     loss = checkpoint['loss']
 
     return model, optimizer, epoch, loss
+
+
+def get_result(image_path):
+    net = get_net(classes=2)
+    net, _, _, _ = load_checkpoint(net, os.path.join('checkpoint', 'checkpoint.pth'))
+    image = Image.open(image_path)
+    image = preprocess_image(image, 'inference')
+    prediction = net(image)
+    result = get_prediction_class(prediction, idx_to_class={0: 'cat', 1: 'dog'})
+    return result
 
 
 def preprocess_image(image_np, mode='train'):
@@ -180,6 +195,13 @@ def get_data_transforms():
         ]),
         'val': transforms.Compose([
             transforms.ToPILImage(),
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
+        ]),
+        'inference': transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
             transforms.ToTensor(),
