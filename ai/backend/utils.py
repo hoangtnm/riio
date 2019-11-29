@@ -60,6 +60,7 @@ class EmotionDataset(Dataset):
 
 def split_image_folder(in_dir, out_dir, train_size=0.8):
     """Split dataset into train and val.
+
     Args:
         in_dir: path to raw dataset folder.
         out_dir: path to processed folder.
@@ -93,53 +94,51 @@ def get_device():
     return torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
-def get_net(classes):
+def get_net(model_name, mode, device, pretrained=False, num_classes=2, checkpoint_path=None):
     """Returns a torchvision model.
-    
+
     Args:
-         classes: num of classes
+        model_name (str): name of model.
+        mode (str): train or val.
+        device (torch.device): where data and model will be put on.
+        pretrained (bool): If True, returns a model pre-trained on COCO train2017.
+        num_classes (int): how many classes will be classified.
+        checkpoint_path (str): path to checkpoint.
 
     Returns:
         net: model instance.
     """
-    net = models.mobilenet_v2()
-    in_features = net.classifier[1].in_features
-    net.classifier[1] = nn.Linear(in_features, classes)
-    return net
+    if model_name == "mobilenet" or model_name == "mobilenet_v2":
+        net = models.mobilenet_v2(pretrained)
+        in_features = net.classifier[1].in_features
+        net.classifier[1] = nn.Linear(in_features, num_classes)
+    elif model_name == "resnet":
+        net = models.resnet18(pretrained)
+        in_features = net.fc.in_features
+        net.fc = nn.Linear(in_features, num_classes)
 
+    if checkpoint_path is not None:
+        checkpoint_dict = torch.load(checkpoint_path, map_location=device)
+        net.load_state_dict(checkpoint_dict['model_state_dict'])
 
-def load_checkpoint(model, path, optimizer=None):
-    """Load checkpoint from path.
+    if mode == 'train':
+        net.train()  # Set model to training mode
+    elif mode == 'val':
+        net.eval()  # Set model to evaluate mode
 
-    Args:
-        model: model instance.
-        path: path to the checkpoint.
-        optimizer: optimizer instance (only needed during training).
-
-    Returns:
-        model: model instance loading checkpoint.
-        optimizer: optimizer instance loading checkpoint.
-        epoch: epoch at which to start training (useful for resuming a previous training run).
-        loss: best loss.
-    """
-    device = get_device()
-    checkpoint = torch.load(path, map_location=device)
-    model.load_state_dict(checkpoint['model_state_dict'])
-    if optimizer is not None:
-        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    epoch = checkpoint['epoch']
-    loss = checkpoint['loss']
-
-    return model, optimizer, epoch, loss
+    return net.to(device)
 
 
 def get_result(image_path):
-    net = get_net(classes=2)
-    net, _, _, _ = load_checkpoint(net, os.path.join('checkpoint', 'checkpoint.pth'))
+    device = get_device()
+    net = get_net('mobilenet_v2', 'val', device,
+                  checkpoint_path=os.path.join('checkpoint', 'checkpoint.pth'))
     image = Image.open(image_path)
     image = preprocess_image(image, 'inference')
-    prediction = net(image)
-    result = get_prediction_class(prediction, idx_to_class={0: 'cat', 1: 'dog'})
+    image = image.to(device)
+    with torch.no_grad():
+        prediction = net(image)
+        result = get_prediction_class(prediction, idx_to_class={0: 'cat', 1: 'dog'})
     return result
 
 
@@ -180,12 +179,11 @@ def get_metadata(path):
 
     Args:
         path: PATH to dataset folder.
-    
+
     Returns:
         dataset_sizes: number of total images.
-        class_names: A list of classes.
-        class_to_idx: A dict mapping class_names to the corresponding labels.
-
+        num_classes:
+        idx_to_class: A dict mapping labels to the corresponding class_names.
         {'drooling-face': 0,
          'face-savouring-delicious-food': 1,
          'face-with-cowboy-hat': 2,
@@ -193,9 +191,13 @@ def get_metadata(path):
     """
     dataset = ImageFolder(path)
     dataset_size = len(dataset)
+
     class_names = dataset.classes
+    num_classes = len(class_names)
+
     class_to_idx = dataset.class_to_idx
-    return dataset_size, class_names, class_to_idx
+    idx_to_class = {value: key for key, value in class_to_idx.items()}
+    return dataset_size, num_classes, idx_to_class
 
 
 def get_data_loader(path, batch_size=2, mode='train', num_workers=2):
@@ -221,13 +223,14 @@ def get_data_transforms():
     data_transforms = {
         'train': transforms.Compose([
             transforms.RandomResizedCrop(224),
+            transforms.ColorJitter(hue=.05, saturation=.05),
             transforms.RandomHorizontalFlip(),
+            transforms.RandomRotation(30, resample=Image.BILINEAR),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
         ]),
         'val': transforms.Compose([
-            transforms.ToPILImage(),
             transforms.Resize(256),
             transforms.CenterCrop(224),
             transforms.ToTensor(),
