@@ -1,4 +1,6 @@
 import os
+import random
+import shutil
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -54,6 +56,37 @@ def write_to_tensorboard():
 class EmotionDataset(Dataset):
     """Emotion dataset."""
     # TODO: Custom Emotion Dataset
+
+
+def split_image_folder(in_dir, out_dir, train_size=0.8):
+    """Split dataset into train and val.
+    Args:
+        in_dir: path to raw dataset folder.
+        out_dir: path to processed folder.
+        train_size: the proportion of the dataset to include in the train split.
+    """
+    class_names = os.listdir(in_dir)
+
+    if os.path.exists(out_dir):
+        shutil.rmtree(out_dir)
+
+    for class_name in class_names:
+        os.makedirs(os.path.join(out_dir, 'train', class_name))
+        os.makedirs(os.path.join(out_dir, 'val', class_name))
+
+        img_list = os.listdir(os.path.join(in_dir, class_name))
+        random.shuffle(img_list)
+        num_images = len(img_list)
+        num_train = int(num_images * train_size)
+
+        train_images = img_list[:num_train]
+        val_images = img_list[num_train:]
+        for image in train_images:
+            shutil.copy2(os.path.join(in_dir, class_name, image),
+                         os.path.join(out_dir, 'train', class_name))
+        for image in val_images:
+            shutil.copy2(os.path.join(in_dir, class_name, image),
+                         os.path.join(out_dir, 'val', class_name))
 
 
 def get_device():
