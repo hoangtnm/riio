@@ -1,13 +1,23 @@
 {% extends "ai/base.html" %}
 {% block title %}History{% endblock %}
 {% block history %}
-    <ul>
+    <table class="table table-dark">
+        <thead>
+        <tr>
+            <th scope="col" class="text-center">Name</th>
+            <th scope="col" class="text-center">Image</th>
+            <th scope="col" class="text-center">Result</th>
+        </tr>
+        </thead>
+        <tbody>
         {% for image in images %}
-            <li>
-                <h3>{{ image.name }}</h3>
-                <img src="{{ image.image.url }}" class="img-fluid">
-                <p>Result: {{ image.result }}</p>
-            </li>
+            <tr>
+                <th scope="row" class="align-middle">{{ image.name }}</th>
+                <td class="align-middle"><img src="{{ image.image.url }}" class="img-fluid"
+                                              style="width:200px;height:200px;"></td>
+                <td class="align-middle">{{ image.result }}</td>
+            </tr>
         {% endfor %}
-    </ul>
-{% endblock history %}
+        </tbody>
+    </table>
+{% endblock %}
