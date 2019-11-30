@@ -1,6 +1,7 @@
 import os
 import random
 import shutil
+import inspect
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,6 +13,7 @@ from torch.utils.data import Dataset
 from torchvision import models
 from torchvision import transforms
 from torchvision.datasets import ImageFolder
+from ai import backend
 
 
 # TODO: Adding a “Projector” to TensorBoard
@@ -132,8 +134,9 @@ def get_net(model_name, mode, device, pretrained=False, num_classes=2, checkpoin
 def get_result(image_path):
     device = get_device()
     net = get_net('mobilenet_v2', 'val', device,
-                  checkpoint_path=os.path.join('checkpoint', 'checkpoint.pth'))
+                  checkpoint_path=os.path.join(os.path.dirname(inspect.getfile(backend)), 'checkpoint', 'checkpoint.pth'))
     image = Image.open(image_path)
+    image = image.convert('RGB')
     image = preprocess_image(image, 'inference')
     image = image.to(device)
     with torch.no_grad():

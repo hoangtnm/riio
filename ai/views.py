@@ -1,7 +1,11 @@
+import os
+import inspect
 from django.shortcuts import render
 from django.shortcuts import render, redirect
 from .forms import ProfileForm
 from .models import Profile
+from ai.backend import utils
+import ai
 
 
 # Create your views here.
@@ -24,9 +28,12 @@ def upload_file(request):
 
 
 def display_history(request):
-    if request.method == 'GET':  # 1
+    if request.method == 'GET':
         form = ProfileForm(request.POST, files=request.FILES)  # 2
     else:
         form = ProfileForm()
     images = Profile.objects.order_by('-id')
+    for image in images:
+        image.result = utils.get_result(os.path.join(os.path.dirname(os.path.dirname(inspect.getfile(ai))), 'media', str(image.image)))
+
     return render(request, 'ai/history.html', {'images': images})
