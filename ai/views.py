@@ -13,7 +13,7 @@ def index(request):
     pass
 
 
-def upload_file(request):
+def upload(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, files=request.FILES)
         if form.is_valid():
@@ -27,7 +27,7 @@ def upload_file(request):
     return render(request, 'ai/home.html', {'form': form, 'images': images})
 
 
-def display_history(request):
+def history(request):
     if request.method == 'GET':
         form = ProfileForm(request.POST, files=request.FILES)  # 2
     else:
