@@ -1,19 +1,12 @@
 {% extends "ai/base.html" %}
 {% block title %}Home{% endblock %}
 {% load crispy_forms_tags %}
-
 {% block show %}
-    <ul>
-        {% for image in images %}
-            <li>
-                <h3>{{ image.name }}</h3>
-                <img src="{{ image.image.url }}  " style="width:500px;high:500px;" alt="">
-            </li>
-        {% endfor %}
-    </ul>
+    {% for image in images %}
+        <h3 class="display-4">{{ image.name }}</h3>
+        <img src="{{ image.image.url }}" class="img-fluid" style="width:500px;high:500px;" alt="">
+    {% endfor %}
 {% endblock show %}
-
-
 {% block content %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
