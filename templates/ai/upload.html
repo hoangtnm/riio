@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block show %}
+	<ul>
+		{% for image in images %}
+			<li>
+				<h3>{{ image.name }}</h3>
+				<img src="{{ image.image.url }}  "style="width:500px;high:500px;" alt="">
+			</li>
+ 		{% endfor %}
+	</ul>
+{% endblock show %}
+
+
+{% block content %}
+	<form method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+        {{ form|crispy }}
+		<button type="submit" class="btn btn-success" >Upload</button>
+	</form>
+{% endblock content %}

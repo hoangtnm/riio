@@ -9,8 +9,8 @@ import ai
 
 
 # Create your views here.
-def index(request):
-    pass
+def home(request):
+    return render(request, "ai/home.html")
 
 
 def upload(request):
@@ -24,7 +24,7 @@ def upload(request):
     last_id = Profile.objects.count()
     images = Profile.objects.filter(id=last_id)
 
-    return render(request, 'ai/home.html', {'form': form, 'images': images})
+    return render(request, 'ai/upload.html', {'form': form, 'images': images})
 
 
 def history(request):

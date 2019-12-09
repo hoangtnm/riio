@@ -1,16 +1,98 @@
-{% extends "ai/base.html" %}
-{% block title %}Home{% endblock %}
-{% load crispy_forms_tags %}
-{% block show %}
-    {% for image in images %}
-        <h3 class="display-4">{{ image.name }}</h3>
-        <img src="{{ image.image.url }}" class="img-fluid" style="width:500px;high:500px;" alt="">
-    {% endfor %}
-{% endblock show %}
-{% block content %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-success">Upload</button>
-    </form>
-{% endblock content %}
+{% extends "base.html" %}
+{% block heading %}{% endblock %}
+{% block page %}
+  <div class="banner">
+    <div class="container">
+      <div class="callout">
+        <div class="intro-text">Image Classifier</div>
+        <div class="intro-text">Cats vs Dogs</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 feature">
+        <span class="fa-stack fa-5x">
+          <i class="fa fa-circle fa-stack-2x"></i>
+          <i class="fa fa-paw fa-inverse fa-stack-1x"></i>
+        </span>
+          <h3>Animal Classification</h3>
+          <p>This is a mini project about image classification to answering the input image is a dogor a cat with machine learning algorithm called convolutional neural networks</p>
+        </div>
+
+        <div class="col-md-6 feature">
+        <span class="fa-stack fa-5x">
+          <i class="fa fa-circle fa-stack-2x c-green"></i>
+          <i class="fa fa-life-ring fa-inverse fa-stack-1x"></i>
+        </span>
+          <h3>Why choose us?</h3>
+          <p>Fast, accurate, effective</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 feature">
+        <span class="fa-stack fa-5x">
+          <i class="fa fa-circle fa-stack-2x c-red"></i>
+          <i class="fa fa-heart fa-inverse fa-stack-1x"></i>
+        </span>
+          <h3>  Made for passion <3</h3>
+        </div>
+
+        <div class="col-md-6 feature">
+        <span class="fa-stack fa-5x">
+          <i class="fa fa-circle fa-stack-2x c-blue"></i>
+          <i class="fa fa-facebook fa-inverse fa-stack-1x"></i>
+
+        </span>
+          <h3>Facebook</h3>
+          <p> <a  href="https://www.facebook.com/marsudocac/"> Quốc Khánh</a></p>
+            <p> <a  href="https://www.facebook.com/profile.php?id=100041848608717/">Minh Hoàng</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="footer hidden-print">
+  <div class="footer-head">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+          <h2 class="title-text">E.D.I.T.H</h2>
+        </div>
+        <div class="col-sm-6 text-right small-text">
+           We &hearts; Animal
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-body">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <h4 class="title-text">Address</h4>
+          <p>Greenwich Of University (VietNam) </p>
+        </div>
+        <div class="col-md-4 text-center">
+          <h4 class="title-text">Contact</h4>
+          <ul class="list-unstyled">
+            <li>
+              <a href="mailto:contato@cademeubicho.com">contato@edith.com</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <div class="fb-page" data-href="https://www.facebook.com/marsudocac/" data-small-header="true"
+               data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="true">
+            <div class="fb-xfbml-parse-ignore">
+              <blockquote cite="https://www.facebook.com/marsudocac">
+                <a href="https://www.facebook.com/marsudocac">E.D.I.T.H LTD</a>
+              </blockquote>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
