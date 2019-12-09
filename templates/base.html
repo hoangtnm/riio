@@ -4,10 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>E.D.I.T.H</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <title>{% block title %}R.I.I.O{% endblock %}</title>
 </head>
 <body>
 <div class="navbar navbar-fixed-top navbar-home" role="navigation">
@@ -19,8 +19,8 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand">
-                E.D.I.T.H
+            <a class="navbar-brand" href="{% url "ai:homepage" %}">
+                R.I.I.O
             </a>
         </div>
         <div class="collapse navbar-collapse">
@@ -31,11 +31,6 @@
         </div>
     </div>
 </div>
-{% block heading %}
-    <div class="heading">
-        <h1 class="title-text text-center">{% block title %}{% endblock %}</h1>
-    </div>
-{% endblock %}
 {% block page %}
     {% block body %}
         {% block show %} {% endblock show %}
