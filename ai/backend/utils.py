@@ -1,7 +1,7 @@
 import os
 import random
 import shutil
-import inspect
+import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,55 +9,12 @@ import torch
 import torch.nn as nn
 from PIL import Image
 from torch.utils.data import DataLoader
-from torch.utils.data import Dataset
 from torchvision import models
 from torchvision import transforms
 from torchvision.datasets import ImageFolder
-from ai import backend
 
-
-# TODO: Adding a “Projector” to TensorBoard
-def select_n_random(data, labels, n=100):
-    """Selects n random data points and their corresponding labels from a dataset."""
-    assert len(data) == len(labels)
-
-    perm = torch.randperm(len(data))
-    return data[perm][:n], labels[perm][:n]
-
-
-def write_embedding_to_tensorboard(data, targets, feature_size, class_names, writer, global_step=None):
-    """Writes embedding to TensorBoard.
-
-    Args:
-        data: data points.
-        targets: corresponding labels.
-        feature_size: a matrix which each row is the feature vector of the data point.
-        class_names (list): list of classes.
-        writer: TensorBoard writer.
-        global_step (int): global step value to record.
-    """
-    # select random images and their target indices
-    images, labels = select_n_random(data, targets)
-
-    # get the class labels for each image
-    class_labels = [class_names[label] for label in labels]
-
-    # log embeddings
-    features = images.view(-1, 3 * (feature_size ** 2))
-    writer.add_embedding(features,
-                         metadata=class_labels,
-                         label_img=images,
-                         global_step=global_step)
-
-
-# TODO: Writing loss to TensorBoard
-def write_to_tensorboard():
-    pass
-
-
-class EmotionDataset(Dataset):
-    """Emotion dataset."""
-    # TODO: Custom Emotion Dataset
+cwd = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(cwd)
 
 
 def split_image_folder(in_dir, out_dir, train_size=0.8):
@@ -134,7 +91,7 @@ def get_net(model_name, mode, device, pretrained=False, num_classes=2, checkpoin
 def get_result(image_path):
     device = get_device()
     net = get_net('mobilenet_v2', 'val', device,
-                  checkpoint_path=os.path.join(os.path.dirname(inspect.getfile(backend)), 'checkpoint', 'checkpoint.pth'))
+                  checkpoint_path=os.path.join(cwd, 'checkpoint', 'checkpoint.pth'))
     image = Image.open(image_path)
     image = image.convert('RGB')
     image = preprocess_image(image, 'inference')

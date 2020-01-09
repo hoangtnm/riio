@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Upload{% endblock %}
+% load static %}
+<!-- {% block title %}Upload{% endblock %} -->
 {% load crispy_forms_tags %}
 {% block show %}
     <ul>
@@ -10,7 +11,7 @@
             </li>
         {% endfor %}
     </ul>
-{% endblock show %}
+{% endblock %}
 
 {% block content %}
     <form method="post" enctype="multipart/form-data">
@@ -18,4 +19,4 @@
         {{ form|crispy }}
         <button type="submit" class="btn btn-success">Upload</button>
     </form>
-{% endblock content %}
+{% endblock %}

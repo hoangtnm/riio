@@ -1,11 +1,10 @@
 import os
-import inspect
+
 from django.shortcuts import render
-from django.shortcuts import render, redirect
+
+from ai.backend import utils
 from .forms import ProfileForm
 from .models import Profile
-from ai.backend import utils
-import ai
 
 
 # Create your views here.
@@ -21,6 +20,7 @@ def upload(request):
             # return redirect('upload_file')
     else:
         form = ProfileForm()
+    
     last_id = Profile.objects.count()
     images = Profile.objects.filter(id=last_id)
 
@@ -32,8 +32,12 @@ def history(request):
         form = ProfileForm(request.POST, files=request.FILES)  # 2
     else:
         form = ProfileForm()
+    
     images = Profile.objects.order_by('-id')
+
+    # Predicts whether each image is cat or dog
     for image in images:
-        image.result = utils.get_result(os.path.join(os.path.dirname(os.path.dirname(inspect.getfile(ai))), 'media', str(image.image)))
+        image.result = utils.get_result(
+            os.path.join('media', str(image.image)))
 
     return render(request, 'ai/history.html', {'images': images})
