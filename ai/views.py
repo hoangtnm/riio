@@ -20,7 +20,7 @@ def upload(request):
         if form.is_valid():
             image = form.save()
         
-        # Update image'result
+        # Update image's result
         last_id = Profile.objects.count()
         image = Profile.objects.filter(id=last_id)[0]
         image.result = utils.get_result(
@@ -34,10 +34,5 @@ def upload(request):
 
 
 def history(request):
-    if request.method == 'GET':
-        form = ProfileForm(request.POST, files=request.FILES)  # 2
-    else:
-        form = ProfileForm()
-    
     images = Profile.objects.order_by('-id')
     return render(request, 'ai/history.html', {'images': images})
