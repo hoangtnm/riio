@@ -13,20 +13,22 @@ def home(request):
 
 
 def upload(request):
+    image = None
+
     if request.method == 'POST':
         form = ProfileForm(request.POST, files=request.FILES)
         if form.is_valid():
             image = form.save()
+        
+        # Update image'result
+        last_id = Profile.objects.count()
+        image = Profile.objects.filter(id=last_id)[0]
+        image.result = utils.get_result(
+            os.path.join('media', str(image.image)))
+        image.save()
+    
     else:
         form = ProfileForm()
-    
-    last_id = Profile.objects.count()
-    image = Profile.objects.filter(id=last_id)[0]
-    
-    # Update image'result
-    image.result = utils.get_result(
-        os.path.join('media', str(image.image)))
-    image.save()
 
     return render(request, 'ai/upload.html', {'form': form, 'image': image})
 
