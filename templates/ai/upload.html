@@ -4,12 +4,10 @@
 {% load crispy_forms_tags %}
 {% block show %}
     <ul>
-        {% for image in images %}
-            <li>
-                <h3>{{ image.name }}</h3>
-                <img src="{{ image.image.url }}  " style="width:500px;high:500px;" alt="">
-            </li>
-        {% endfor %}
+        <li>
+            <h3>{{ image.name }}</h3>
+            <img src="{{ image.image.url }}" style="width:200px;height:200px;" alt="">
+        </li>
     </ul>
 {% endblock %}
 

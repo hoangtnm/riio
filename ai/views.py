@@ -17,14 +17,18 @@ def upload(request):
         form = ProfileForm(request.POST, files=request.FILES)
         if form.is_valid():
             image = form.save()
-            # return redirect('upload_file')
     else:
         form = ProfileForm()
     
     last_id = Profile.objects.count()
-    images = Profile.objects.filter(id=last_id)
+    image = Profile.objects.filter(id=last_id)[0]
+    
+    # Update image'result
+    image.result = utils.get_result(
+        os.path.join('media', str(image.image)))
+    image.save()
 
-    return render(request, 'ai/upload.html', {'form': form, 'images': images})
+    return render(request, 'ai/upload.html', {'form': form, 'image': image})
 
 
 def history(request):
@@ -34,10 +38,4 @@ def history(request):
         form = ProfileForm()
     
     images = Profile.objects.order_by('-id')
-
-    # Predicts whether each image is cat or dog
-    for image in images:
-        image.result = utils.get_result(
-            os.path.join('media', str(image.image)))
-
     return render(request, 'ai/history.html', {'images': images})
