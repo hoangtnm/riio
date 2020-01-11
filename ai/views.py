@@ -26,7 +26,7 @@ def upload(request):
         image.result = utils.get_result(
             os.path.join('media', str(image.image)))
         image.save()
-    
+
     else:
         form = ProfileForm()
 

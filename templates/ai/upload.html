@@ -1,18 +1,41 @@
-{% extends "base.html" %}
-% load static %}
-<!-- {% block title %}Upload{% endblock %} -->
+<!DOCTYPE html>
+{% load static %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+</head>
+{% load static %}
 {% load crispy_forms_tags %}
-{% block show %}
-    {% if image %}
-        <!-- <h3>{{ image.name }}</h3> -->
-        <img src="{{ image.image.url }}" style="width:200px;height:200px;" alt="">
-    {% endif %}
-{% endblock %}
-
-{% block content %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-success">Upload</button>
-    </form>
-{% endblock %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <h1 class="mt-2 text-xl-center font-weight-bold display-3 bg-dark text-white">R.I.I.O</h1>
+            <hr class="mt-0 mb-4">
+            {% block show %}
+                {% if image %}
+                    <h3>{{ image.name }}</h3>
+                    <img src="{{ image.image.url }}  "style="width:500px;high:500px;" alt="">
+                {% endif %}
+            {% endblock %}
+            {% block content %}
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-success" >Upload</button>
+                    <a href="{% url 'ai:history' %}" class="btn btn-success" role="button" aria-pressed="true">History</a>
+                    <a href="{% url 'ai:homepage' %}" class="btn btn-success" role="button" aria-pressed="true">Home</a>
+                </form>
+            {% endblock %}
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="{% static "js/bootstrap.bundle.js" %}"></script>
+</html>
