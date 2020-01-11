@@ -19,7 +19,6 @@ def upload_file(request):
         form = ProfileForm()
     last_id = Profile.objects.count()
     images = Profile.objects.filter(id=last_id)
-
     return render(request, 'ai/upload.html', {'form': form, 'images': images})
 
 

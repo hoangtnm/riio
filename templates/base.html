@@ -23,17 +23,9 @@
       </ul>
     </div>
 </div>
-{% block heading %}
-  <div class="heading">
-    <h1 class="title-text text-center">{% block title %}{% endblock %}</h1>
-  </div>
-{% endblock heading %}
-{% block page %}
-      {% block body %}
-          {% block show %} {% endblock show %}
-          {% block content %}{% endblock content %}
-      {% endblock body %}
-{% endblock page %}
+{% block page %}{% endblock page %}
+{% block show %} {% endblock show %}
+{% block content %}{% endblock content %}
 {%block history %} {% endblock history %}
 </body>
 </html>

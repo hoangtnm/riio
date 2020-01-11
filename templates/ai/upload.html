@@ -8,7 +8,7 @@
 <div class="container">
       <div class="row justify-content-center">
         <div class="col-8">
-          <h1 class="mt-2">Django People</h1>
+          <h1 class="mt-2 text-xl-center font-weight-bold display-3 bg-dark text-white">E.D.I.T.H</h1>
           <hr class="mt-0 mb-4">
 {% block show %}
 	<ul>
@@ -25,10 +25,11 @@
 		{% csrf_token %}
         {{ form|crispy }}
 		<button type="submit" class="btn btn-success" >Upload</button>
+        <a href="{% url 'ai:display_history' %}" class="btn btn-success" role="button" aria-pressed="true">History</a>
+        <a href="{% url 'ai:homepage' %}" class="btn btn-success" role="button" aria-pressed="true">Home</a>
 	</form>
 {% endblock content %}
-                </div>
+        </div>
       </div>
-    </div>
-
+     </div>
 </html>
